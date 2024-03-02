@@ -1,0 +1,48 @@
+version: "1.0"
+services:
+  dashboard:
+#    build:
+#        context: .
+    image: uscimsc/w4h:latest
+    container_name: dashboard
+    ports:
+      - 8501:8501
+    depends_on:
+      - db
+  db:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: admin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+  spark:
+    image: docker.io/bitnami/spark:3.5
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+    volumes:
+      - type: bind
+        source: ./conf/log4j.properties
+        target: /opt/bitnami/spark/conf/log4j.properties
+    ports:
+      - '8080:8080'
+      - '7077:7077'
+  spark-worker:
+    image: docker.io/bitnami/spark:3.5
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
