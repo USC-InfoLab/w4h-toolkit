@@ -27,10 +27,10 @@ services:
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
       - SPARK_USER=spark
-    volumes:
-      - type: bind
-        source: ./conf/log4j.properties
-        target: /opt/bitnami/spark/conf/log4j.properties
+    # volumes:
+    #   - type: bind
+    #     source: ./conf/log4j.properties
+    #     target: /opt/bitnami/spark/conf/log4j.properties
     ports:
       - '8080:8080'
       - '7077:7077'
